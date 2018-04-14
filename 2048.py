@@ -11,6 +11,7 @@ def print_matrix():
 	print
 
 def move(direction="left"):
+	# define a bunch of values for each direction of motion
 	directionLookup = {"left": [0,-1,0,1,0,col-1,1], "right": [0,1,0,col-2,0,0,-1], "up": [-1,0,1,0,row-1,0,1]}
 	
 	dirRow = directionLookup[direction][0]
