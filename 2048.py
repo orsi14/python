@@ -10,67 +10,63 @@ def print_matrix():
 		print()
 	print
 
-def move(direction="left"):
+def move(matrix, direction="left"):
 	# TO-DO: transpose function is throwing an error - not sure why - might be namespace related.
 	# this function was working for left and right, but not up and down
 	# for up and down, i added a transpose function so that it could use the same code as left/right
 	# the direction lookup probably needs to be reviewed as it has too many options - it should be simpler by using the transpose to deal with up/down
 	
 	# define a bunch of values for each direction of motion
-	directionLookup = {"left": [0,-1,0,1,0,game_size-1,1], "right": [0,1,0,game_size-2,0,0,-1], "up": [0,-1,0,1,0,game_size-1,1], "down": [0,1,0,game_size-2,0,0,-1]}
+	directionLookup = {"left": [-1,1,game_size-1,1], "right": [1,game_size-2,0,-1], "up": [-1,1,game_size-1,1], "down": [1,game_size-2,0,-1]}
 	
 	if direction is "up" or direction is "down":
-		print(matrix)
-		matrix = transpose(matrix)
-		
+		matrix = matrix.transpose()
+		print(matrix)	
 	
-	dirRow = directionLookup[direction][0]
-	dirCol = directionLookup[direction][1]
-	startRow = directionLookup[direction][2]
-	startCol = directionLookup[direction][3]
-	endRow = directionLookup[direction][4]
-	endCol = directionLookup[direction][5]
-	stepDir = directionLookup[direction][6]
+	dirCol = directionLookup[direction][0]
+	startCol = directionLookup[direction][1]
+	endCol = directionLookup[direction][2]
+	stepDir = directionLookup[direction][3]
 	
 	# for each row, start from the second from the left and move it as far left as possible
 	# then move to the next cell and do the same
 	hasMoved = False
 	
-	for a in range(game_size):
-		for b in range(startCol,endCol+stepDir,stepDir):
-			if matrix[a][b] is not "":
-				checkCol = b+dirCol
+	for arow in range(game_size):
+		for acol in range(startCol,endCol+stepDir,stepDir):
+			if matrix[arow][acol] is not "":
+				checkCol = acol+dirCol
 				
 				#print "Found a thing to move.",
 				#print "Box of interest at (", a, ",",b, ") is ", matrix[a][b] 
 				#print "To its left has a value of ", matrix[a][checkCol]
 				
-				while checkCol >= 0 and checkCol < game_size and matrix[a][checkCol] == "":
+				while checkCol >= 0 and checkCol < game_size and matrix[arow][checkCol] == "":
 					hasMoved = True
 					#print "Empty box at (", a, ",",checkCol,") is ", matrix[a][checkCol]
 					#print "Putting value ", matrix[a][checkCol+1], "into it"
-					matrix[a][checkCol] = matrix[a][checkCol+stepDir]
-					matrix[a][checkCol+stepDir] = ""
+					matrix[arow][checkCol] = matrix[arow][checkCol+stepDir]
+					matrix[arow][checkCol+stepDir] = ""
 					checkCol -= stepDir
 					#print_matrix()
 	
-	for a in range(game_size):
+	for arow in range(game_size):
 		for b in range(startCol+dirCol,endCol,stepDir):
 			# if the cell to the right is the same, squish em together
 			# and then move all other cells one to the left
-			if matrix[a][b] == matrix[a][b+stepDir] and matrix[a][b] is not "":
+			if matrix[arow][b] == matrix[arow][b+stepDir] and matrix[arow][b] is not "":
 				
 				hasMoved = True
-				matrix[a][b] *= 2
-				matrix[a][b+stepDir] = ""
+				matrix[arow][b] *= 2
+				matrix[arow][b+stepDir] = ""
 				moveCol = b+stepDir
 				while moveCol < game_size-stepDir and moveCol > 0:
 					matrix[a][moveCol] = matrix[a][moveCol+stepDir]
 					matrix[a][moveCol+stepDir] = ""
 					moveCol += stepDir
 	
-	#if direction is "up" or direction is "down":
-		#matrix = matrix.transpose((1,0))
+	if direction is "up" or direction is "down":
+		matrix = matrix.transpose()
 	
 	return hasMoved
 
@@ -93,8 +89,7 @@ def add_block():
 game_size = 4
 
 matrix = [["" for a in range(game_size)] for b in range(game_size)]
-asarray(matrix)
-
+matrix = asarray(matrix)
 
 # Format of matrix is:
 # matrix[row id][col id]
@@ -107,15 +102,15 @@ while True:
 	userInput = input("Enter a direction (a=left, s=down, d=right, w=up, q=quit): ")
 	if userInput is "q": break
 	if userInput is "a": 
-		if move("left"):
+		if move(matrix, "left"):
 			add_block()
 	if userInput is "s": 
-		if move("down"):
+		if move(matrix, "down"):
 			add_block()
 	if userInput is "d": 
-		if move("right"):
+		if move(matrix, "right"):
 			add_block()
 	if userInput is "w": 
-		if move("up"):
+		if move(matrix, "up"):
 			add_block()
 
