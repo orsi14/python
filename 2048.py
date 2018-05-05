@@ -87,13 +87,28 @@ def move(matrix, direction="left"):
 	
 	return hasMoved
 	
+def is_move_possible():
+	move_possible = True
+	# To do - this isn't working yet - the game just continues
+	if count_nonzero(matrix) >= game_size**2: 
+		print("Game is full")
+		move_possible = False
+		# if all of the blocks are non-zero, see if there is a possible move
+		for arow in range(game_size-1):
+			for acol in range(game_size-1):
+				#go through every cell, excluding the last row and column and check if the cell
+				#next to it or below it is the same
+				if matrix[arow,acol] == matrix[acol+1,arow] or matrix[arow,acol] == matrix[acol,arow+1]:
+					move_possible = True
+				
+	return True
 	
 def add_block():
 	# print("We are about to add a block to this matrix:")
 	# print_matrix()
 	
-	# pick a random block value
-	value = int((randrange(2)+1)*2)
+	# pick a random block value - some percentage of time it will be 4
+	value = int((randrange(0,100)<15)*2 + 2)
 	
 	foundEmpty = False
 	# pick a random coordinate and see if it is empty
@@ -118,8 +133,8 @@ matrix = zeros(shape=(game_size,game_size))
 
 add_block()
 
-while True:
-	print("Here is the board:")
+while is_move_possible():
+	# print("Here is the board:")
 	print_matrix()
 	userInput = input("Enter a direction (a=left, s=down, d=right, w=up, q=quit): ")
 	if userInput is "q": break
