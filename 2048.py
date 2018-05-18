@@ -1,5 +1,7 @@
 from random import *
 from numpy import *
+from getch import *
+import logging
 
 def print_matrix():
 	
@@ -85,30 +87,40 @@ def move(matrix, direction="left"):
 	if direction is "up" or direction is "down":
 		matrix = matrix.transpose()
 	
-	return hasMoved
+	return {'matrix':matrix, 'hasMoved':hasMoved}
 	
 def is_move_possible():
 	move_possible = True
-	# To do - this isn't working yet - the game just continues
+	# ToDo - refactor to make this cleaner
 	if count_nonzero(matrix) >= game_size**2: 
-		print("Game is full")
+		# print("Game is full")
 		move_possible = False
 		# if all of the blocks are non-zero, see if there is a possible move
 		for arow in range(game_size-1):
 			for acol in range(game_size-1):
 				#go through every cell, excluding the last row and column and check if the cell
 				#next to it or below it is the same
-				if matrix[arow,acol] == matrix[acol+1,arow] or matrix[arow,acol] == matrix[acol,arow+1]:
+				if matrix[arow,acol] == matrix[arow+1,acol] or matrix[arow,acol] == matrix[arow,acol+1]:
+					# print("Found a possible move looking at",arow,acol)
 					move_possible = True
+		# check last row and column
+		for acol in range(game_size-1):
+			if matrix[game_size-1][acol] == matrix[game_size-1][acol+1]:
+				move_possible = True
+			
+		for arow in range(game_size-1):
+			if matrix[arow][game_size-1] == matrix[arow+1][game_size-1]:
+				move_possible = True
 				
-	return True
+	return move_possible
 	
-def add_block():
+def add_block(matrix):
+
 	# print("We are about to add a block to this matrix:")
 	# print_matrix()
 	
 	# pick a random block value - some percentage of time it will be 4
-	value = int((randrange(0,100)<15)*2 + 2)
+	value = int((randrange(0,100)<(100*probability_of_four))*2 + 2)
 	
 	foundEmpty = False
 	# pick a random coordinate and see if it is empty
@@ -119,35 +131,38 @@ def add_block():
 			foundEmpty = True
 			matrix[newRow,newCol] = value
 			
-	# print(matrix)
+	print_matrix()
+	return matrix
+	
+def init():
+	matrix = zeros(shape=(game_size,game_size))
+	return matrix
 	
 # Define constants
 # row and col define how many rows and columns are in the matrix
+logging.basicConfig(filename='2048.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
 game_size = 4
+probability_of_four = 0.15
 
-matrix = zeros(shape=(game_size,game_size))
 
-# Format of matrix is:
-# matrix[row id,col id]
-# where 0,0 is the top left
+# Initialize game
+matrix = init()
+matrix = add_block(matrix)
 
-add_block()
+	# Format of matrix is:
+	# matrix[row id,col id]
+	# where 0,0 is the top left
 
 while is_move_possible():
 	# print("Here is the board:")
-	print_matrix()
-	userInput = input("Enter a direction (a=left, s=down, d=right, w=up, q=quit): ")
+	print("Enter a direction (a=left, s=down, d=right, w=up, q=quit): ")
+	directions = {'a':"left", 's':"down", 'd':"right", 'w':"up"}
+	userInput = getch()
 	if userInput is "q": break
-	if userInput is "a": 
-		if move(matrix, "left"):
-			add_block()
-	if userInput is "s": 
-		if move(matrix, "down"):
-			add_block()
-	if userInput is "d": 
-		if move(matrix, "right"):
-			add_block()
-	if userInput is "w": 
-		if move(matrix, "up"):
-			add_block()
-
+	if userInput in ("a","s","d","w"): 
+		result = move(matrix, directions[userInput])
+		matrix = result['matrix']
+		if result['hasMoved'] == True:
+			add_block(matrix)
+			
+logging.info('Game completed: %d max, %d total', matrix.max(), matrix.sum())
