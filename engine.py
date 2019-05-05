@@ -1,10 +1,13 @@
 from random import *
 from numpy import *
-from getch import *
 import logging
 
 # game parameters
 probability_of_four = 0.15 # this is the probability that a new block will be a 4
+
+def init(game_size):
+	matrix = zeros(shape=(game_size,game_size))
+	return matrix
 
 def print_matrix(matrix):
 

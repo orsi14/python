@@ -1,21 +1,16 @@
 from random import *
-from numpy import *
 from getch import *
 from engine import *
 import logging
 
-	
-def init():
-	matrix = zeros(shape=(game_size,game_size))
-	return matrix
-	
+		
 # Define constants
 # row and col define how many rows and columns are in the matrix
 logging.basicConfig(filename='2048.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
 game_size = 4
 
 # Initialize game
-matrix = init()
+matrix = init(game_size)
 matrix = add_block(matrix)
 
 	# Format of matrix is:
