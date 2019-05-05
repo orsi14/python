@@ -2,7 +2,7 @@ from random import *
 from numpy import *
 from getch import *
 import logging
-import 2048-engine
+import engine
 	
 def init():
 	matrix = zeros(shape=(game_size,game_size))
