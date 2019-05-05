@@ -1,8 +1,9 @@
 from random import *
 from numpy import *
 from getch import *
+from engine import *
 import logging
-import engine
+
 	
 def init():
 	matrix = zeros(shape=(game_size,game_size))
@@ -12,8 +13,6 @@ def init():
 # row and col define how many rows and columns are in the matrix
 logging.basicConfig(filename='2048.log',format='%(asctime)s %(levelname)s %(message)s',level=logging.DEBUG)
 game_size = 4
-probability_of_four = 0.15
-
 
 # Initialize game
 matrix = init()
