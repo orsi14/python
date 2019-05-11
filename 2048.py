@@ -10,23 +10,24 @@ logging.basicConfig(filename='2048.log',format='%(asctime)s %(levelname)s %(mess
 game_size = 4
 
 # Initialize game
-matrix = init(game_size)
-matrix = add_block(matrix)
+myGame = Game(4)
+myGame.add_block()
 
 	# Format of matrix is:
 	# matrix[row id,col id]
 	# where 0,0 is the top left
 
-while is_move_possible(matrix):
+while myGame.is_move_possible():
 	# print("Here is the board:")
 	print("Enter a direction (a=left, s=down, d=right, w=up, q=quit): ")
 	directions = {'a':"left", 's':"down", 'd':"right", 'w':"up"}
 	userInput = getch()
 	if userInput is "q": break
 	if userInput in ("a","s","d","w"): 
-		result = move(matrix, directions[userInput])
-		matrix = result['matrix']
-		if result['hasMoved'] == True:
-			add_block(matrix)
-			
-logging.info('Game completed: %d max, %d total', matrix.max(), matrix.sum())
+		if myGame.move(directions[userInput]):
+			myGame.add_block()
+			myGame.print_matrix()
+
+print("\nGame Over....\n\n")
+
+logging.info('Game completed: %d max, %d total', myGame.matrix.max(), myGame.matrix.sum())
